@@ -2,22 +2,27 @@ pub mod extensions;
 
 pub struct ServiceCache {}
 
-pub trait CacheOuter: CacheInner {}
+pub trait CacheOuter: private::CacheInner {}
 
-trait CacheInner {
-    fn get(&self);
-    fn set(&self);
-    fn info(&self) -> String;
+
+// Using sealed trait pattern
+mod private {
+    pub trait CacheInner {
+        fn get(&self);
+        fn set(&self);
+        fn info(&self) -> String;
+    }
+
+    impl CacheInner for super::ServiceCache {
+        fn get(&self) {}
+
+        fn set(&self) {}
+
+        fn info(&self) -> String {
+            String::from("impl CacheInner for ServiceCache")
+        }
+    }
 }
 
 impl CacheOuter for ServiceCache {}
 
-impl CacheInner for ServiceCache {
-    fn get(&self) {}
-
-    fn set(&self) {}
-
-    fn info(&self) -> String {
-        String::from("impl CacheInner for ServiceCache")
-    }
-}
